@@ -5395,6 +5395,8 @@ func preemptone(_p_ *p) bool {
 	// preemption into the normal stack overflow check.
 	gp.stackguard0 = stackPreempt
 
+	//fmt.Println("preemptMSupported: ", preemptMSupported)
+	//fmt.Println("debug.asyncpreemptoff: ", debug.asyncpreemptoff)
 	// Request an async preemption of this P.
 	if preemptMSupported && debug.asyncpreemptoff == 0 {
 		_p_.preempt = true

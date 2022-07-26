@@ -1771,6 +1771,12 @@ func (g *genInst) getSymForMethodCall(se *ir.SelectorExpr, subst *typecheck.Tsub
 	// need to look at the type of the selection to get the final receiver type.
 	recvType := deref(se.Selection.Type.Recv().Type)
 	genRecvType := recvType.OrigType()
+	// if the genRecvType is nil, it means that it's an embeding type independent of type parameters
+	// so se.Sel is the final Func sym
+	if genRecvType == nil {
+		return se.Sel
+	}
+
 	nameNode := typecheck.Lookdot1(se, se.Sel, genRecvType, genRecvType.Methods(), 1).Nname.(*ir.Name)
 	subtargs := recvType.RParams()
 	s2targs := make([]*types.Type, len(subtargs))
