@@ -25,11 +25,6 @@ type PkgDecoder struct {
 	// sync indicates whether the file uses sync markers.
 	sync bool
 
-	// pkgPath is the package path for the package to be decoded.
-	//
-	// TODO(mdempsky): Remove; unneeded since CL 391014.
-	pkgPath string
-
 	// elemData is the full data payload of the encoded package.
 	// Elements are densely and contiguously packed together.
 	//
@@ -54,23 +49,13 @@ type PkgDecoder struct {
 	elemEndsEnds [numRelocs]uint32
 }
 
-// PkgPath returns the package path for the package
-//
-// TODO(mdempsky): Remove; unneeded since CL 391014.
-func (pr *PkgDecoder) PkgPath() string { return pr.pkgPath }
-
 // SyncMarkers reports whether pr uses sync markers.
 func (pr *PkgDecoder) SyncMarkers() bool { return pr.sync }
 
 // NewPkgDecoder returns a PkgDecoder initialized to read the Unified
-// IR export data from input. pkgPath is the package path for the
-// compilation unit that produced the export data.
-//
-// TODO(mdempsky): Remove pkgPath parameter; unneeded since CL 391014.
-func NewPkgDecoder(pkgPath, input string) PkgDecoder {
-	pr := PkgDecoder{
-		pkgPath: pkgPath,
-	}
+// IR export data from input.
+func NewPkgDecoder(input string) PkgDecoder {
+	pr := PkgDecoder{}
 
 	// TODO(mdempsky): Implement direct indexing of input string to
 	// avoid copying the position information.
@@ -263,11 +248,12 @@ func (r *Decoder) Sync(mWant SyncMarker) {
 	// "$GOROOT" (like objabi.AbsFile does) if tools can be taught how
 	// to reliably expand that again.
 
-	fmt.Printf("export data desync: package %q, section %v, index %v, offset %v\n", r.common.pkgPath, r.k, r.Idx, pos)
+	pkgPath := r.String()
+	fmt.Printf("export data desync: package %q, section %v, index %v, offset %v\n", pkgPath, r.k, r.Idx, pos)
 
 	fmt.Printf("\nfound %v, written at:\n", mHave)
 	if len(writerPCs) == 0 {
-		fmt.Printf("\t[stack trace unavailable; recompile package %q with -d=syncframes]\n", r.common.pkgPath)
+		fmt.Printf("\t[stack trace unavailable; recompile package %q with -d=syncframes]\n", pkgPath)
 	}
 	for _, pc := range writerPCs {
 		fmt.Printf("\t%s\n", r.common.StringIdx(r.rawReloc(RelocString, pc)))
@@ -410,9 +396,6 @@ func (r *Decoder) bigFloat() *big.Float {
 func (pr *PkgDecoder) PeekPkgPath(idx Index) string {
 	r := pr.NewDecoder(RelocPkg, idx, SyncPkgDef)
 	path := r.String()
-	if path == "" {
-		path = pr.pkgPath
-	}
 	return path
 }
 

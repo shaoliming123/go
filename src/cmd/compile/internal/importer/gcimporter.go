@@ -167,7 +167,7 @@ func Import(packages map[string]*types2.Package, path, srcDir string, lookup fun
 		switch exportFormat {
 		case 'u':
 			s = s[:strings.Index(s, "\n$$\n")]
-			input := pkgbits.NewPkgDecoder(id, s)
+			input := pkgbits.NewPkgDecoder(s)
 			pkg = ReadPackage(nil, packages, input)
 		case 'i':
 			pkg, err = ImportData(packages, s, id)

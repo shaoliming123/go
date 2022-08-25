@@ -238,7 +238,7 @@ func readImportFile(path string, target *ir.Package, env *types2.Context, packag
 		// TODO(mdempsky): This seems a bit clunky.
 		data = strings.TrimSuffix(data, "\n$$\n")
 
-		pr := pkgbits.NewPkgDecoder(pkg1.Path, data)
+		pr := pkgbits.NewPkgDecoder(data)
 
 		// Read package descriptors for both types2 and compiler backend.
 		readPackage(newPkgReader(pr), pkg1, false)

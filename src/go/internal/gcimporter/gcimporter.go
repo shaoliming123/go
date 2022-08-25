@@ -166,7 +166,7 @@ func Import(fset *token.FileSet, packages map[string]*types.Package, path, srcDi
 			s := string(data)
 			s = s[:strings.LastIndex(s, "\n$$\n")]
 
-			input := pkgbits.NewPkgDecoder(id, s)
+			input := pkgbits.NewPkgDecoder(s)
 			pkg = readUnifiedPackage(fset, nil, packages, input)
 		case 'i':
 			pkg, err = iImportData(fset, packages, buf, id)

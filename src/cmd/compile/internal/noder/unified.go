@@ -84,7 +84,7 @@ func unified(noders []*noder) {
 
 	typecheck.TypecheckAllowed = true
 
-	localPkgReader = newPkgReader(pkgbits.NewPkgDecoder(types.LocalPkg.Path, data))
+	localPkgReader = newPkgReader(pkgbits.NewPkgDecoder(data))
 	readPackage(localPkgReader, types.LocalPkg, true)
 
 	r := localPkgReader.newReader(pkgbits.RelocMeta, pkgbits.PrivateRootIdx, pkgbits.SyncPrivate)
